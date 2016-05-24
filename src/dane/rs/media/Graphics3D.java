@@ -124,7 +124,7 @@ public class Graphics3D extends Graphics2D {
 		}
 
 		// average each channel and bitpack
-		int rgb = adjustColorLightness((r / length << 16) + (g / length << 8) + b / length, 1.4);
+		int rgb = adjustRGBIntensity((r / length << 16) + (g / length << 8) + b / length, 1.4);
 
 		// we use 0 to identify as unretrieved
 		if (rgb == 0) {
@@ -246,75 +246,52 @@ public class Graphics3D extends Graphics2D {
 		return buffer;
 	}
 
+	private static double getValue(double value, double a, double b) {
+		if ((6.0 * value) < 1.0)
+			return b + ((a - b) * 6.0 * value);
+		if (2.0 * value < 1.0)
+			return a;
+		if (3.0 * value < 2.0)
+			return b + ((a - b) * ((2.0 / 3.0) - value) * 6.0);
+		return b;
+	}
+
 	public static void generatePalette(double exponent) {
 		int off = 0;
 
 		for (int y = 0; y < 512; y++) {
-			double hue = (double) (y / 8) / 64.0 + 0.0078125;
-			double saturation = (double) (y & 0x7) / 8.0 + 0.0625;
+			double fGreen = ((double) (y / 8) / 64.0) + 0.0078125;
+			double saturation = ((double) (y & 0x7) / 8.0) + 0.0625;
 
 			for (int x = 0; x < 128; x++) {
 				double lightness = (double) x / 128.0;
-				double r = lightness;
-				double g = lightness;
-				double b = lightness;
+				double red = lightness;
+				double green = lightness;
+				double blue = lightness;
 
 				if (saturation != 0.0) {
-					double d_36_;
+					double a;
 
 					if (lightness < 0.5) {
-						d_36_ = lightness * (1.0 + saturation);
+						a = lightness * (1.0 + saturation);
 					} else {
-						d_36_ = lightness + saturation - lightness * saturation;
+						a = (lightness + saturation) - (lightness * saturation);
 					}
 
-					double d_37_ = 2.0 * lightness - d_36_;
-					double d_38_ = hue + 0.3333333333333333;
+					double b = (2.0 * lightness) - a;
 
-					if (d_38_ > 1.0) {
-						d_38_--;
-					}
+					double fRed = fGreen + (1.0 / 3.0);
+					double fBlue = fGreen - (1.0 / 3.0);
 
-					double d_40_ = hue - 0.3333333333333333;
+					if (fRed > 1.0) fRed--;
+					if (fBlue < 0.0) fBlue++;
 
-					if (d_40_ < 0.0) {
-						d_40_++;
-					}
-
-					if (6.0 * d_38_ < 1.0) {
-						r = d_37_ + (d_36_ - d_37_) * 6.0 * d_38_;
-					} else if (2.0 * d_38_ < 1.0) {
-						r = d_36_;
-					} else if (3.0 * d_38_ < 2.0) {
-						r = d_37_ + (d_36_ - d_37_) * (0.6666666666666666 - d_38_) * 6.0;
-					} else {
-						r = d_37_;
-					}
-
-					if (6.0 * hue < 1.0) {
-						g = d_37_ + (d_36_ - d_37_) * 6.0 * hue;
-					} else if (2.0 * hue < 1.0) {
-						g = d_36_;
-					} else if (3.0 * hue < 2.0) {
-						g = d_37_ + (d_36_ - d_37_) * (0.6666666666666666 - hue) * 6.0;
-					} else {
-						g = d_37_;
-					}
-
-					if (6.0 * d_40_ < 1.0) {
-						b = d_37_ + (d_36_ - d_37_) * 6.0 * d_40_;
-					} else if (2.0 * d_40_ < 1.0) {
-						b = d_36_;
-					} else if (3.0 * d_40_ < 2.0) {
-						b = d_37_ + (d_36_ - d_37_) * (0.6666666666666666 - d_40_) * 6.0;
-					} else {
-						b = d_37_;
-					}
+					red = getValue(fRed, a, b);
+					green = getValue(fGreen, a, b);
+					blue = getValue(fBlue, a, b);
 				}
 
-				int rgb = ((int) (r * 256.0) << 16) + ((int) (g * 256.0) << 8) + (int) (b * 256.0);
-				rgb = adjustColorLightness(rgb, exponent);
-				palette[off++] = rgb;
+				palette[off++] = adjustRGBIntensity(((int) (red * 256.0) << 16) | ((int) (green * 256.0) << 8) | (int) (blue * 256.0), exponent);
 			}
 
 			// updates the texture palette brightness
@@ -324,7 +301,7 @@ public class Graphics3D extends Graphics2D {
 					texturePalettes[n] = new int[texturePalette.length];
 
 					for (int i = 0; i < texturePalette.length; i++) {
-						texturePalettes[n][i] = adjustColorLightness(texturePalette[i], exponent);
+						texturePalettes[n][i] = adjustRGBIntensity(texturePalette[i], exponent);
 					}
 				}
 
@@ -333,13 +310,13 @@ public class Graphics3D extends Graphics2D {
 		}
 	}
 
-	public static int adjustColorLightness(int rgb, double exponent) {
+	private static int adjustRGBIntensity(int rgb, double intensity) {
 		double r = (double) (rgb >> 16) / 256.0;
 		double g = (double) (rgb >> 8 & 0xff) / 256.0;
 		double b = (double) (rgb & 0xff) / 256.0;
-		r = Math.pow(r, exponent);
-		g = Math.pow(g, exponent);
-		b = Math.pow(b, exponent);
+		r = Math.pow(r, intensity);
+		g = Math.pow(g, intensity);
+		b = Math.pow(b, intensity);
 		return ((int) (r * 256.0) << 16) + ((int) (g * 256.0) << 8) + (int) (b * 256.0);
 	}
 
