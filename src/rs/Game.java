@@ -6,6 +6,7 @@ import rs.io.Buffer;
 import rs.audio.Audio;
 import rs.io.BufferedStream;
 import rs.media.*;
+import rs.media.Graphics2D;
 import rs.util.*;
 import rs.world.CollisionMap;
 import rs.world.ObjNode;
@@ -975,9 +976,9 @@ public class Game extends GameShell {
 			y -= (h / 2);
 			y -= 21; // titleCenter isn't even perfectly centered
 
-			rs.media.Graphics2D.fillRect(x, y, w, h, 0);
-			rs.media.Graphics2D.drawRect(x, y, w, h, 0x8C1111);
-			rs.media.Graphics2D.fillRect(x + 2, y + 2, ((w - 4) * percent) / 100, h - 4, 0x8C1111);
+			Graphics2D.fillRect(x, y, w, h, 0);
+			Graphics2D.drawRect(x, y, w, h, 0x8C1111);
+			Graphics2D.fillRect(x + 2, y + 2, ((w - 4) * percent) / 100, h - 4, 0x8C1111);
 
 			fontBold.drawCentered(caption, centerX, centerY - (h / 2), 0xFFFFFF);
 
@@ -1111,11 +1112,11 @@ public class Game extends GameShell {
 			sideiconsBottom = new ImageProducer(288, 40);
 
 			maparea = new ImageProducer(168, 160);
-			rs.media.Graphics2D.clear();
+			Graphics2D.clear();
 			mapback.draw(0, 0);
 
 			viewport = new ImageProducer(viewportWidth, viewportHeight);
-			rs.media.Graphics2D.clear();
+			Graphics2D.clear();
 
 			redraw = true;
 		}
@@ -1132,31 +1133,31 @@ public class Game extends GameShell {
 			sideiconsTop = null;
 
 			titleLeft = new ImageProducer(128, 265);
-			rs.media.Graphics2D.clear();
+			Graphics2D.clear();
 
 			titleRight = new ImageProducer(128, 265);
-			rs.media.Graphics2D.clear();
+			Graphics2D.clear();
 
 			titleTop = new ImageProducer(533, 186);
-			rs.media.Graphics2D.clear();
+			Graphics2D.clear();
 
 			titleBottom = new ImageProducer(360, 146);
-			rs.media.Graphics2D.clear();
+			Graphics2D.clear();
 
 			titleCenter = new ImageProducer(360, 200);
-			rs.media.Graphics2D.clear();
+			Graphics2D.clear();
 
 			titleBottomLeft = new ImageProducer(214, 267);
-			rs.media.Graphics2D.clear();
+			Graphics2D.clear();
 
 			titleBottomRight = new ImageProducer(215, 267);
-			rs.media.Graphics2D.clear();
+			Graphics2D.clear();
 
 			titleLeftSpace = new ImageProducer(86, 79);
-			rs.media.Graphics2D.clear();
+			Graphics2D.clear();
 
 			titleRightSpace = new ImageProducer(87, 79);
-			rs.media.Graphics2D.clear();
+			Graphics2D.clear();
 
 			if (titleArchive != null) {
 				loadTitleBackground();
@@ -3209,7 +3210,7 @@ public class Game extends GameShell {
 		Model.mouseX = mouseX - 8;
 		Model.mouseY = mouseY - 11;
 
-		rs.media.Graphics2D.clear();
+		Graphics2D.clear();
 
 		Scene.mouseX = Model.mouseX;
 		Scene.mouseY = Model.mouseY;
@@ -3512,10 +3513,10 @@ public class Game extends GameShell {
 							int w = fontBold.stringWidth(e.spoken);
 							int x = ((150 - e.spokenLife) * (w + 100)) / 150;
 
-							rs.media.Graphics2D.setBounds(drawX - 50, 0, drawX + 50, 334);
+							Graphics2D.setBounds(drawX - 50, 0, drawX + 50, 334);
 							fontBold.draw(e.spoken, drawX + 50 - x, drawY + 1, 0);
 							fontBold.draw(e.spoken, drawX + 50 - x, drawY, rgb);
-							rs.media.Graphics2D.resetBounds();
+							Graphics2D.resetBounds();
 						}
 					} else {
 						fontBold.drawCentered(e.spoken, drawX, drawY + 1, 0);
@@ -3533,8 +3534,8 @@ public class Game extends GameShell {
 						w = 30;
 					}
 
-					rs.media.Graphics2D.fillRect(drawX - 15, drawY - 3, w, 5, 0xFF00);
-					rs.media.Graphics2D.fillRect(drawX - 15 + w, drawY - 3, 30 - w, 5, 0xFF0000);
+					Graphics2D.fillRect(drawX - 15, drawY - 3, w, 5, 0xFF00);
+					Graphics2D.fillRect(drawX - 15 + w, drawY - 3, 30 - w, 5, 0xFF0000);
 				}
 			}
 
@@ -6226,9 +6227,9 @@ public class Game extends GameShell {
 		int h = minimenuHeight;
 		int bgrgb = 0x5D5447;
 
-		rs.media.Graphics2D.fillRect(x, y, w, h, bgrgb);
-		rs.media.Graphics2D.fillRect(x + 1, y + 1, w - 2, 16, 0);
-		rs.media.Graphics2D.drawRect(x + 1, y + 18, w - 2, h - 19, 0);
+		Graphics2D.fillRect(x, y, w, h, bgrgb);
+		Graphics2D.fillRect(x + 1, y + 1, w - 2, 16, 0);
+		Graphics2D.drawRect(x + 1, y + 18, w - 2, h - 19, 0);
 		fontBold.draw("Choose Option", x + 3, y + 14, bgrgb);
 
 		int mx = mouseX;
@@ -7139,11 +7140,11 @@ public class Game extends GameShell {
 		}
 
 		if (parent.type == RSInterface.TYPE_PARENT && parent.children != null && (!parent.hidden || viewportHoveredInterfaceIndex == parent.index || sidebarHoveredInterfaceIndex == parent.index || chatHoveredInterfaceIndex == parent.index)) {
-			int left = rs.media.Graphics2D.left;
-			int top = rs.media.Graphics2D.top;
-			int right = rs.media.Graphics2D.right;
-			int bottom = rs.media.Graphics2D.bottom;
-			rs.media.Graphics2D.setBounds(parentX, parentY, parentX + parent.width, parentY + parent.height);
+			int left = Graphics2D.left;
+			int top = Graphics2D.top;
+			int right = Graphics2D.right;
+			int bottom = Graphics2D.bottom;
+			Graphics2D.setBounds(parentX, parentY, parentX + parent.width, parentY + parent.height);
 
 			for (int n = 0; n < parent.children.length; n++) {
 				int x = parent.childX[n] + parentX;
@@ -7208,9 +7209,9 @@ public class Game extends GameShell {
 					}
 				} else if (child.type == RSInterface.TYPE_RECT) {
 					if (child.fill) {
-						rs.media.Graphics2D.fillRect(x, y, child.width, child.height, child.colorDisabled);
+						Graphics2D.fillRect(x, y, child.width, child.height, child.colorDisabled);
 					} else {
-						rs.media.Graphics2D.drawRect(x, y, child.width, child.height, child.colorDisabled);
+						Graphics2D.drawRect(x, y, child.width, child.height, child.colorDisabled);
 					}
 				} else if (child.type == RSInterface.TYPE_TEXT) {
 					IndexedFont f = child.font;
@@ -7365,7 +7366,7 @@ public class Game extends GameShell {
 					}
 				}
 			}
-			rs.media.Graphics2D.setBounds(left, top, right, bottom);
+			Graphics2D.setBounds(left, top, right, bottom);
 		}
 	}
 
@@ -7420,7 +7421,7 @@ public class Game extends GameShell {
 	public final void drawScrollbar(int x, int y, int h, int scrollHeight, int scrollAmount) {
 		scrollbar1.draw(x, y);
 		scrollbar2.draw(x, y + h - 16);
-		rs.media.Graphics2D.fillRect(x, y + 16, 16, h - 32, SCROLLBAR_TRACK_COLOR);
+		Graphics2D.fillRect(x, y + 16, 16, h - 32, SCROLLBAR_TRACK_COLOR);
 
 		int gripHeight = ((h - 32) * h) / scrollHeight;
 
@@ -7429,15 +7430,15 @@ public class Game extends GameShell {
 		}
 
 		int offY = ((h - 32 - gripHeight) * scrollAmount) / (scrollHeight - h);
-		rs.media.Graphics2D.fillRect(x, y + 16 + offY, 16, gripHeight, SCROLLBAR_GRIP_FOREGROUND);
-		rs.media.Graphics2D.drawVerticalLine(x, y + 16 + offY, gripHeight, SCROLLBAR_GRIP_HIGHLIGHT);
-		rs.media.Graphics2D.drawVerticalLine(x + 1, y + 16 + offY, gripHeight, SCROLLBAR_GRIP_HIGHLIGHT);
-		rs.media.Graphics2D.drawHorizontalLine(x, y + 16 + offY, 16, SCROLLBAR_GRIP_HIGHLIGHT);
-		rs.media.Graphics2D.drawHorizontalLine(x, y + 17 + offY, 16, SCROLLBAR_GRIP_HIGHLIGHT);
-		rs.media.Graphics2D.drawVerticalLine(x + 15, y + 16 + offY, gripHeight, SCROLLBAR_GRIP_LOWLIGHT);
-		rs.media.Graphics2D.drawVerticalLine(x + 14, y + 17 + offY, gripHeight - 1, SCROLLBAR_GRIP_LOWLIGHT);
-		rs.media.Graphics2D.drawHorizontalLine(x, y + 15 + offY + gripHeight, 16, SCROLLBAR_GRIP_LOWLIGHT);
-		rs.media.Graphics2D.drawHorizontalLine(x + 1, y + 14 + offY + gripHeight, 15, SCROLLBAR_GRIP_LOWLIGHT);
+		Graphics2D.fillRect(x, y + 16 + offY, 16, gripHeight, SCROLLBAR_GRIP_FOREGROUND);
+		Graphics2D.drawVerticalLine(x, y + 16 + offY, gripHeight, SCROLLBAR_GRIP_HIGHLIGHT);
+		Graphics2D.drawVerticalLine(x + 1, y + 16 + offY, gripHeight, SCROLLBAR_GRIP_HIGHLIGHT);
+		Graphics2D.drawHorizontalLine(x, y + 16 + offY, 16, SCROLLBAR_GRIP_HIGHLIGHT);
+		Graphics2D.drawHorizontalLine(x, y + 17 + offY, 16, SCROLLBAR_GRIP_HIGHLIGHT);
+		Graphics2D.drawVerticalLine(x + 15, y + 16 + offY, gripHeight, SCROLLBAR_GRIP_LOWLIGHT);
+		Graphics2D.drawVerticalLine(x + 14, y + 17 + offY, gripHeight - 1, SCROLLBAR_GRIP_LOWLIGHT);
+		Graphics2D.drawHorizontalLine(x, y + 15 + offY + gripHeight, 16, SCROLLBAR_GRIP_LOWLIGHT);
+		Graphics2D.drawHorizontalLine(x + 1, y + 14 + offY + gripHeight, 15, SCROLLBAR_GRIP_LOWLIGHT);
 	}
 
 	public final String getAmountString(int i) {
@@ -8120,7 +8121,7 @@ public class Game extends GameShell {
 			}
 		}
 
-		rs.media.Graphics2D.fillRect(93, 82, 3, 3, 0xFFFFFF);
+		Graphics2D.fillRect(93, 82, 3, 3, 0xFFFFFF);
 		viewport.prepare();
 	}
 
@@ -8182,7 +8183,7 @@ public class Game extends GameShell {
 			drawInterface(RSInterface.instances[chatInterfaceId], 0, 0, 0);
 		} else {
 			int messageCount = 0;
-			rs.media.Graphics2D.setBounds(0, 0, 463, 77);
+			Graphics2D.setBounds(0, 0, 463, 77);
 
 			for (int n = 0; n < 50; n++) {
 				if (chatMessage[n] != null) {
@@ -8243,7 +8244,7 @@ public class Game extends GameShell {
 					}
 				}
 			}
-			rs.media.Graphics2D.resetBounds();
+			Graphics2D.resetBounds();
 			chatHeight = (messageCount * 14) + 7;
 
 			if (chatHeight < 78) {
@@ -8252,7 +8253,7 @@ public class Game extends GameShell {
 
 			drawScrollbar(463, 0, 77, chatHeight, chatHeight - chatScrollAmount - 77);
 			fontFancy.draw(chatInput + "*", 3, 90, 0);
-			rs.media.Graphics2D.drawHorizontalLine(0, 77, 479, 0);
+			Graphics2D.drawHorizontalLine(0, 77, 479, 0);
 		}
 		chatarea.draw(graphics, 22, 375);
 		viewport.prepare();
