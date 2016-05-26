@@ -10,60 +10,12 @@ import java.util.logging.*;
 
 public final class Buffer extends CacheableNode {
 
-	private static final Logger logger = Logger.getLogger(Buffer.class.getName());
-
 	private static final int[] BITMASK;
-
-	private static int poolSize1;
-	private static int poolSize2;
-	private static int poolSize3;
-	private static final LinkedList pool1 = new LinkedList();
-	private static final LinkedList pool2 = new LinkedList();
-	private static final LinkedList pool3 = new LinkedList();
 
 	public byte[] data;
 	public int position;
 	public int bitPosition;
 	public IsaacRandom isaac;
-	private int varStart, varSize;
-
-	public static Buffer get(int type) {
-		synchronized (pool2) {
-			Buffer b = null;
-
-			if (type == 0 && poolSize1 > 0) {
-				poolSize1--;
-				b = (Buffer) pool1.poll();
-			} else if (type == 1 && poolSize2 > 0) {
-				poolSize2--;
-				b = (Buffer) pool2.poll();
-			} else if (type == 2 && poolSize3 > 0) {
-				poolSize3--;
-				b = (Buffer) pool3.poll();
-			}
-
-			if (b != null) {
-				b.position = 0;
-				return b;
-			}
-		}
-
-		Buffer b = new Buffer();
-		b.position = 0;
-
-		if (type == 0) {
-			b.data = new byte[100];
-		} else if (type == 1) {
-			b.data = new byte[5000];
-		} else {
-			b.data = new byte[30000];
-		}
-
-		return b;
-	}
-
-	private Buffer() {
-	}
 
 	public Buffer(int size) {
 		this(new byte[size]);
@@ -72,25 +24,6 @@ public final class Buffer extends CacheableNode {
 	public Buffer(byte[] src) {
 		data = src;
 		position = 0;
-	}
-
-	// untested
-	public void startVarSize(int opcode, int bytes) {
-		putOpcode(opcode);
-		position += bytes;
-		varStart = position;
-		varSize = bytes;
-	}
-
-	// untested
-	public int endVarSize() {
-		final int length = position - varStart;
-		final int bytes = varSize + 1;
-
-		for (int i = 1; i < bytes; i++) {
-			data[position - length - i] = (byte) (length >> ((i - 1) * 8));
-		}
-		return length;
 	}
 
 	public void putOpcode(int opcode) {

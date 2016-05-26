@@ -195,9 +195,9 @@ public class Game extends GameShell {
 	// used for spawning stuff
 	public int netTileX, netTileZ;
 
-	public Buffer in = Buffer.get(1);
-	public Buffer out = Buffer.get(1);
-	public Buffer loginBuffer = Buffer.get(1);
+	public Buffer in = new Buffer(5000);
+	public Buffer out = new Buffer(5000);
+	public Buffer loginBuffer = new Buffer(512);
 	public BufferedStream stream;
 
 	/* Fonts */
@@ -4718,103 +4718,72 @@ public class Game extends GameShell {
 
 				Signlink.setRate(5);
 
-				int minRegionX = (centerSectorX - 6) / 8;
-				int minRegionY = (centerSectorY - 6) / 8;
-				int maxRegionX = (centerSectorX + 6) / 8;
-				int maxRegionY = (centerSectorY + 6) / 8;
+				// if you're trying to get all surrounding sectors:
+				// = ((maxRegionX - minRegionX) + 1) * ((maxRegionY - minRegionY) + 1);
 
-				// = (packetSize - 2) / 10;
-				int mapCount = ((maxRegionX - minRegionX) + 1) * ((maxRegionY - minRegionY) + 1);
-
+				int mapCount = (psize - 2) / 10;
 				mapLandData = new byte[mapCount][];
 				mapLocData = new byte[mapCount][];
 				mapIndices = new int[mapCount];
 
-				mapCount = 0;
+				out.putOpcode(117); // response
+				out.putByte(0); // size placeholder
+				int length = 0;
+				for (int n = 0; n < mapCount; n++) {
+					int x = in.getUByte();
+					int y = in.getUByte();
+					int landCrc = in.getInt();
+					int locCrc = in.getInt();
 
-				// sector change response
-				//out.startVarSize(Packet.SECTOR_CHANGE_RESPONSE, 1);
-				for (int x = minRegionX; x <= maxRegionX; x++) {
-					for (int y = minRegionY; y <= maxRegionY; y++) {
-						mapIndices[mapCount] = (x << 8) | y;
+					mapIndices[n] = (x << 8) + y;
 
-						byte[] data = Signlink.load(String.format("maps/m%s_%s", x, y));
-
-						if (data != null) {
-							mapLandData[mapCount] = data;
-						} else {
-							//out.putByte(0);
-							//out.putByte(x);
-							//out.putByte(y);
-						}
-
-						data = Signlink.load(String.format("maps/l%s_%s", x, y));
+					if (landCrc != 0) {
+						byte[] data = Signlink.load("maps/m" + x + "_" + y);
 
 						if (data != null) {
-							mapLocData[mapCount] = data;
-						} else {
-							//out.putByte(1);
-							//out.putByte(x);
-							//out.putByte(y);
+							crc32.reset();
+							crc32.update(data);
+							if ((int) crc32.getValue() != landCrc) {
+								 data = null;
+							}
 						}
 
-						mapCount++;
+						if (data != null) {
+							mapLandData[n] = data;
+						} else {
+							sceneState = 0;
+							out.putByte(0);
+							out.putByte(x);
+							out.putByte(y);
+							length += 3;
+						}
+
+					}
+
+					if (locCrc != 0) {
+						byte[] data = Signlink.load("maps/l" + x + "_" + y);
+
+						if (data != null) {
+							crc32.reset();
+							crc32.update(data);
+							if (crc32.getValue() != locCrc) {
+								data = null;
+							}
+						}
+
+						if (data != null) {
+							mapLocData[n] = data;
+						} else {
+							sceneState = 0;
+							out.putByte(1);
+							out.putByte(x);
+							out.putByte(y);
+							length += 3;
+						}
 					}
 				}
-				//out.endVarSize();
+				out.putByteLength(length);
 
-				/*for (int n = 0; n < mapCount; n++) {
-				 int x = in.getUByte();
-				 int y = in.getUByte();
-				 int mapcrc32 = in.getInt();
-				 int loccrc32 = in.getInt();
-				 mapIndices[n] = (x << 8) + y;
-
-				 if (mapcrc32 != 0) {
-				 byte[] data = Signlink.loadFile("maps/m" + x + "_" + y);
-
-				 if (data != null) {
-				 crc32.reset();
-				 crc32.update(data);
-				 if ((int) crc32.getValue() != mapcrc32) {
-				 // data = null;
-				 }
-				 }
-
-				 if (data != null) {
-				 mapLandData[n] = data;
-				 } else {
-				 sceneState = 0;
-				 out.putByte(0);
-				 out.putByte(x);
-				 out.putByte(y);
-				 length += 3;
-				 }
-
-				 }
-
-				 if (loccrc32 != 0) {
-				 byte[] data = Signlink.loadFile("maps/l" + x + "_" + y);
-
-				 if (data != null) {
-				 crc32.reset();
-				 crc32.update(data);
-				 if ((int) crc32.getValue() != loccrc32) {
-				 // data = null;
-				 }
-				 }
-
-				 if (data != null) {
-				 mapLocData[n] = data;
-				 } else {
-				 sceneState = 0;
-				 out.putByte(1);
-				 out.putByte(x);
-				 out.putByte(y);
-				 length += 3;
-				 }
-				 }
-				 }*/
 				Signlink.setRate(100);
 
 				int deltaX = mapBaseX - mapLastBaseX;
