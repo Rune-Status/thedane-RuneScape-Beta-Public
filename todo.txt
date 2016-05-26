@@ -1,5 +1,5 @@
-dane.rs.world.CollisionMap.method101
-dane.rs.world.CollisionMap.method102
-dane.rs.world.CollisionMap.method103
+CollisionMap.method101
+CollisionMap.method102
+CollisionMap.method103
 
 That's it!
