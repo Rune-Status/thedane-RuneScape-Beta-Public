@@ -10,7 +10,7 @@ public final class Signlink implements Runnable {
 	private static byte[] loadbuf = null;
 	private static String savereq = null;
 	private static byte[] savebuf = null;
-	public static String midi = null;
+	public static String midi = "none";
 	public static String jingle = null;
 	public static int looprate = 100;
 	public static File cacheDirectory;

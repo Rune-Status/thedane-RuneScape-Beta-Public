@@ -1,7 +1,7 @@
 package rs.io;
 
 import rs.io.bzip2.BZip2InputStream;
-import rs.util.StringTools;
+import rs.util.Strings;
 
 public final class Archive {
 
@@ -52,7 +52,7 @@ public final class Archive {
 	}
 
 	public byte[] get(String name, byte[] dst) {
-		int hash = StringTools.getHash(name);
+		int hash = Strings.getHash(name);
 
 		for (int n = 0; n < fileCount; n++) {
 			if (fileHash[n] == hash) {

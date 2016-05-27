@@ -4,7 +4,7 @@ import rs.io.Buffer;
 
 import java.util.*;
 
-public final class StringTools {
+public final class Strings {
 
 	private static final char[] BASE37_LOOKUP = {
 			'_', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',

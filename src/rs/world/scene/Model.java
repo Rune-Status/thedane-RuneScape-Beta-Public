@@ -1,7 +1,5 @@
 package rs.world.scene;
 
-import dane.rs.*;
-import rs.Game;
 import rs.data.SeqFrame;
 import rs.data.SeqTransform;
 import rs.io.Archive;
@@ -9,7 +7,7 @@ import rs.io.Buffer;
 import rs.media.Graphics2D;
 import rs.media.Graphics3D;
 import rs.util.CacheableNode;
-import rs.util.TriangleTools;
+import rs.util.Triangles;
 import rs.world.scene.model.Normal;
 
 public class Model extends CacheableNode {
@@ -1488,8 +1486,8 @@ public class Model extends CacheableNode {
 			y = x0;
 
 			vertexDepth[v] = z - depth;
-			vertexScreenX[v] = centerX + (x * Game.viewportWidth) / z;
-			vertexScreenY[v] = centerY + (y * Game.viewportWidth) / z;
+			vertexScreenX[v] = centerX + (x * Graphics3D.viewportWidth) / z;
+			vertexScreenY[v] = centerY + (y * Graphics3D.viewportWidth) / z;
 
 			if (texturedCount > 0) {
 				projectSceneX[v] = x;
@@ -1511,13 +1509,13 @@ public class Model extends CacheableNode {
 		}
 
 		int e = ((sceneZ * sinCameraYaw) + (sceneX * cosCameraYaw)) >> 16;
-		int minScreenX = (e - lengthXZ) * Game.viewportWidth;
+		int minScreenX = (e - lengthXZ) * Graphics3D.viewportWidth;
 
 		if (minScreenX / d >= Graphics2D.centerX) {
 			return;
 		}
 
-		int maxScreenX = (e + lengthXZ) * Game.viewportWidth;
+		int maxScreenX = (e + lengthXZ) * Graphics3D.viewportWidth;
 
 		if (maxScreenX / d <= -Graphics2D.centerX) {
 			return;
@@ -1526,7 +1524,7 @@ public class Model extends CacheableNode {
 		int f = ((sceneY * cosCameraPitch) - (a * sinCameraPitch)) >> 16;
 		int g = (lengthXZ * sinCameraPitch) >> 16;
 
-		int maxScreenY = (f + g) * Game.viewportWidth;
+		int maxScreenY = (f + g) * Graphics3D.viewportWidth;
 
 		if (maxScreenY / d <= -Graphics2D.centerY) {
 			return;
@@ -1534,7 +1532,7 @@ public class Model extends CacheableNode {
 
 		int h = g + (maxBoundY * cosCameraPitch >> 16);
 
-		int minScreenY = (f - h) * Game.viewportWidth;
+		int minScreenY = (f - h) * Graphics3D.viewportWidth;
 
 		if (minScreenY / d >= Graphics2D.centerY) {
 			return;
@@ -1617,8 +1615,8 @@ public class Model extends CacheableNode {
 			vertexDepth[v] = z - b;
 
 			if (z >= Scene.NEAR_Z) {
-				vertexScreenX[v] = cx + (x * Game.viewportWidth) / z;
-				vertexScreenY[v] = cy + (y * Game.viewportWidth) / z;
+				vertexScreenX[v] = cx + (x * Graphics3D.viewportWidth) / z;
+				vertexScreenY[v] = cy + (y * Graphics3D.viewportWidth) / z;
 			} else {
 				vertexScreenX[v] = -5000;
 				project = true;
@@ -1657,7 +1655,7 @@ public class Model extends CacheableNode {
 					int depth = ((vertexDepth[a] + vertexDepth[b] + vertexDepth[c]) / 3 + minDepth);
 					depthTriangles[depth][depthTriangleCount[depth]++] = t;
 				} else {
-					if (hasInput && TriangleTools.isWithin(mouseX, mouseY, vertexScreenY[a], vertexScreenY[b], vertexScreenY[c], x0, x1, x2)) {
+					if (hasInput && Triangles.contains(mouseX, mouseY, vertexScreenY[a], vertexScreenY[b], vertexScreenY[c], x0, x1, x2)) {
 						hoveredBitsets[hoverCount++] = bitset;
 						hasInput = false;
 					}
@@ -1899,15 +1897,15 @@ public class Model extends CacheableNode {
 
 			if (zC >= Scene.NEAR_Z) {
 				int interpolant = (Scene.NEAR_Z - zA) * oneOverFixed1616[zC - zA];
-				tmpX[n] = centerX + ((x + (((projectSceneX[c] - x) * interpolant) >> 16)) * Game.viewportWidth) / Scene.NEAR_Z;
-				tmpY[n] = centerY + ((y + (((projectSceneY[c] - y) * interpolant) >> 16)) * Game.viewportWidth) / Scene.NEAR_Z;
+				tmpX[n] = centerX + ((x + (((projectSceneX[c] - x) * interpolant) >> 16)) * Graphics3D.viewportWidth) / Scene.NEAR_Z;
+				tmpY[n] = centerY + ((y + (((projectSceneY[c] - y) * interpolant) >> 16)) * Graphics3D.viewportWidth) / Scene.NEAR_Z;
 				tmpColor[n++] = color + ((colorC[index] - color) * interpolant >> 16);
 			}
 
 			if (zB >= Scene.NEAR_Z) {
 				int interpolant = (Scene.NEAR_Z - zA) * oneOverFixed1616[zB - zA];
-				tmpX[n] = (centerX + (x + ((projectSceneX[b] - x) * interpolant >> 16) * Game.viewportWidth) / Scene.NEAR_Z);
-				tmpY[n] = (centerY + (y + ((projectSceneY[b] - y) * interpolant >> 16) * Game.viewportWidth) / Scene.NEAR_Z);
+				tmpX[n] = (centerX + (x + ((projectSceneX[b] - x) * interpolant >> 16) * Graphics3D.viewportWidth) / Scene.NEAR_Z);
+				tmpY[n] = (centerY + (y + ((projectSceneY[b] - y) * interpolant >> 16) * Graphics3D.viewportWidth) / Scene.NEAR_Z);
 				tmpColor[n++] = color + ((colorB[index] - color) * interpolant >> 16);
 			}
 		}
@@ -1923,15 +1921,15 @@ public class Model extends CacheableNode {
 
 			if (zA >= Scene.NEAR_Z) {
 				int mul = (Scene.NEAR_Z - zB) * oneOverFixed1616[zA - zB];
-				tmpX[n] = (centerX + (x + ((projectSceneX[a] - x) * mul >> 16) * Game.viewportWidth) / Scene.NEAR_Z);
-				tmpY[n] = (centerY + (y + ((projectSceneY[a] - y) * mul >> 16) * Game.viewportWidth) / Scene.NEAR_Z);
+				tmpX[n] = (centerX + (x + ((projectSceneX[a] - x) * mul >> 16) * Graphics3D.viewportWidth) / Scene.NEAR_Z);
+				tmpY[n] = (centerY + (y + ((projectSceneY[a] - y) * mul >> 16) * Graphics3D.viewportWidth) / Scene.NEAR_Z);
 				tmpColor[n++] = color + ((colorA[index] - color) * mul >> 16);
 			}
 
 			if (zC >= Scene.NEAR_Z) {
 				int mul = (Scene.NEAR_Z - zB) * oneOverFixed1616[zC - zB];
-				tmpX[n] = (centerX + (x + ((projectSceneX[c] - x) * mul >> 16) * Game.viewportWidth) / Scene.NEAR_Z);
-				tmpY[n] = (centerY + (y + ((projectSceneY[c] - y) * mul >> 16) * Game.viewportWidth) / Scene.NEAR_Z);
+				tmpX[n] = (centerX + (x + ((projectSceneX[c] - x) * mul >> 16) * Graphics3D.viewportWidth) / Scene.NEAR_Z);
+				tmpY[n] = (centerY + (y + ((projectSceneY[c] - y) * mul >> 16) * Graphics3D.viewportWidth) / Scene.NEAR_Z);
 				tmpColor[n++] = color + ((colorC[index] - color) * mul >> 16);
 			}
 		}
@@ -1948,14 +1946,14 @@ public class Model extends CacheableNode {
 			if (zB >= Scene.NEAR_Z) {
 				int mul = (Scene.NEAR_Z - zC) * (oneOverFixed1616[zB - zC]);
 
-				tmpX[n] = (centerX + (x + (((projectSceneX[b] - x) * mul) >> 16) * Game.viewportWidth) / Scene.NEAR_Z);
-				tmpY[n] = (centerY + (y + (((projectSceneY[b] - y) * mul) >> 16) * Game.viewportWidth) / Scene.NEAR_Z);
+				tmpX[n] = (centerX + (x + (((projectSceneX[b] - x) * mul) >> 16) * Graphics3D.viewportWidth) / Scene.NEAR_Z);
+				tmpY[n] = (centerY + (y + (((projectSceneY[b] - y) * mul) >> 16) * Graphics3D.viewportWidth) / Scene.NEAR_Z);
 				tmpColor[n++] = color + ((colorB[index] - color) * mul >> 16);
 			}
 			if (zA >= Scene.NEAR_Z) {
 				int mul = (Scene.NEAR_Z - zC) * oneOverFixed1616[zA - zC];
-				tmpX[n] = (centerX + (x + (((projectSceneX[a] - x) * mul) >> 16) * Game.viewportWidth) / Scene.NEAR_Z);
-				tmpY[n] = (centerY + (y + (((projectSceneY[a] - y) * mul) >> 16) * Game.viewportWidth) / Scene.NEAR_Z);
+				tmpX[n] = (centerX + (x + (((projectSceneX[a] - x) * mul) >> 16) * Graphics3D.viewportWidth) / Scene.NEAR_Z);
+				tmpY[n] = (centerY + (y + (((projectSceneY[a] - y) * mul) >> 16) * Graphics3D.viewportWidth) / Scene.NEAR_Z);
 				tmpColor[n++] = color + ((colorA[index] - color) * mul >> 16);
 			}
 		}

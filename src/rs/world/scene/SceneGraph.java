@@ -1,7 +1,5 @@
 package rs.world.scene;
 
-import dane.rs.*;
-import rs.Game;
 import rs.data.Loc;
 import rs.media.Graphics2D;
 import rs.media.Graphics3D;
@@ -1114,8 +1112,8 @@ public final class SceneGraph {
 			return false;
 		}
 
-		int screenX = viewportCenterX + (x * Game.viewportWidth) / z;
-		int screenY = viewportCenterY + (y * Game.viewportWidth) / z;
+		int screenX = viewportCenterX + (x * Graphics3D.viewportWidth) / z;
+		int screenY = viewportCenterY + (y * Graphics3D.viewportWidth) / z;
 
 		return !(screenX < viewportLeft || screenX > viewportRight || screenY < viewportTop || screenY > viewportBottom);
 	}
@@ -2073,14 +2071,14 @@ public final class SceneGraph {
 			return;
 		}
 
-		int x0 = (Graphics3D.centerX + (rx0 * Game.viewportWidth) / rz0);
-		int y0 = (Graphics3D.centerY + (ry0 * Game.viewportWidth) / rz0);
-		int x1 = (Graphics3D.centerX + (rx1 * Game.viewportWidth) / rz1);
-		int y1 = (Graphics3D.centerY + (ry1 * Game.viewportWidth) / rz1);
-		int x2 = (Graphics3D.centerX + (rx2 * Game.viewportWidth) / rz2);
-		int y2 = (Graphics3D.centerY + (ry2 * Game.viewportWidth) / rz2);
-		int x3 = (Graphics3D.centerX + (rx3 * Game.viewportWidth) / rz3);
-		int y3 = (Graphics3D.centerY + (ry3 * Game.viewportWidth) / rz3);
+		int x0 = (Graphics3D.centerX + (rx0 * Graphics3D.viewportWidth) / rz0);
+		int y0 = (Graphics3D.centerY + (ry0 * Graphics3D.viewportWidth) / rz0);
+		int x1 = (Graphics3D.centerX + (rx1 * Graphics3D.viewportWidth) / rz1);
+		int y1 = (Graphics3D.centerY + (ry1 * Graphics3D.viewportWidth) / rz1);
+		int x2 = (Graphics3D.centerX + (rx2 * Graphics3D.viewportWidth) / rz2);
+		int y2 = (Graphics3D.centerY + (ry2 * Graphics3D.viewportWidth) / rz2);
+		int x3 = (Graphics3D.centerX + (rx3 * Graphics3D.viewportWidth) / rz3);
+		int y3 = (Graphics3D.centerY + (ry3 * Graphics3D.viewportWidth) / rz3);
 
 		Graphics3D.alpha = 0;
 
@@ -2171,8 +2169,8 @@ public final class SceneGraph {
 				TileOverlay.vertexSceneZ[v] = sceneZ;
 			}
 
-			TileOverlay.tmpScreenX[v] = Graphics3D.centerX + (sceneX * Game.viewportWidth) / sceneZ;
-			TileOverlay.tmpScreenY[v] = Graphics3D.centerY + (sceneY * Game.viewportWidth) / sceneZ;
+			TileOverlay.tmpScreenX[v] = Graphics3D.centerX + (sceneX * Graphics3D.viewportWidth) / sceneZ;
+			TileOverlay.tmpScreenY[v] = Graphics3D.centerY + (sceneY * Graphics3D.viewportWidth) / sceneZ;
 		}
 
 		Graphics3D.alpha = 0;

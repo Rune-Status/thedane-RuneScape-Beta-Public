@@ -5,7 +5,7 @@ import rs.io.Buffer;
 import rs.media.IndexedFont;
 import rs.media.Sprite;
 import rs.util.Cache;
-import rs.util.StringTools;
+import rs.util.Strings;
 import rs.world.scene.Model;
 
 public class RSInterface {
@@ -33,7 +33,7 @@ public class RSInterface {
 	private static Cache modelCache;
 
 	private static Sprite getSprite(String name, Archive media, int index) {
-		long uid = (StringTools.getHash(name) << 4) + (long) index;
+		long uid = (Strings.getHash(name) << 4) + (long) index;
 		Sprite s = (Sprite) spriteCache.get(uid);
 
 		if (s != null) {

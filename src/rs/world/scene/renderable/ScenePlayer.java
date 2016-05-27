@@ -1,6 +1,5 @@
 package rs.world.scene.renderable;
 
-import dane.rs.*;
 import rs.Game;
 import rs.data.Idk;
 import rs.data.Obj;
@@ -8,7 +7,7 @@ import rs.data.Seq;
 import rs.data.SpotAnim;
 import rs.io.Buffer;
 import rs.util.Cache;
-import rs.util.StringTools;
+import rs.util.Strings;
 import rs.world.scene.Model;
 
 public final class ScenePlayer extends SceneEntity {
@@ -68,7 +67,7 @@ public final class ScenePlayer extends SceneEntity {
 		turnRightSeq = b.getUShort();
 		turnLeftSeq = b.getUShort();
 
-		name = StringTools.toStartCase(StringTools.fromBase37(b.getLong()));
+		name = Strings.toStartCase(Strings.fromBase37(b.getLong()));
 		level = b.getUByte();
 
 		visible = true;

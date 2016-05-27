@@ -36,26 +36,16 @@ public class Game extends GameShell {
 	/* Constants */
 	public static final long serialVersionUID = -1412785310365267985L;
 
-	public static final int[] SPOKEN_COLORS = {0xFFFF00, 0xFF0000, 0xFF00, 0xFFFF, 0xFF00FF, 0xFFFFFF};
-
 	public static final int[] NPC_OPTION_TYPES = {710, 301, 328, 498, 74};
 	public static final int[] LOC_OPTION_TYPES = {981, 462, 54, 146, 754};
 	public static final int[] OBJ_OPTION_TYPES = {917, 14, 401, 514, 164};
 	public static final int[] DEFAULT_INVENTORY_OPTION_TYPES = {678, 523, 836, 548, 62};
-
-	public static final int SCROLLBAR_TRACK_COLOR = 0x23201B;
-	public static final int SCROLLBAR_GRIP_LOWLIGHT = 0x332D25;
-	public static final int SCROLLBAR_GRIP_HIGHLIGHT = 0x766654;
-	public static final int SCROLLBAR_GRIP_FOREGROUND = 0x4D4233;
 
 	private static final BigInteger RSA_PUBLIC_KEY = new BigInteger("65537");
 	private static final BigInteger RSA_MODULUS = new BigInteger("7812195651798630460421383203856347196871842391361465813236814379432429589919363835604415214307918376302637436046047237696729217302608698961142292326455619");
 
 	public static final int LOCALPLAYER_INDEX = 2047;
 	public static final int MAX_ENTITY_COUNT = 2048;
-
-	public static int viewportWidth = 512;
-	public static int viewportHeight = 334;
 
 	public static final int[] EXPERIENCE_TABLE = new int[99];
 
@@ -678,7 +668,7 @@ public class Game extends GameShell {
 	public void loadTextures(Archive textures) {
 		drawProgress("Unpacking textures", 85);
 		Graphics3D.unpackTextures(textures);
-		Graphics3D.generatePalette(0.8);
+		Palette.setBrightness(0.8);
 		Graphics3D.setupPools(20);
 	}
 
@@ -739,7 +729,7 @@ public class Game extends GameShell {
 
 	@Override
 	public void load() {
-		Signlink.midi = "midi.php";
+		//Signlink.midi = "something.mid";
 
 		if (started) {
 			errorAlreadyStarted = true;
@@ -793,10 +783,10 @@ public class Game extends GameShell {
 			Graphics3D.prepareOffsets(190, 261);
 			sidebarOffsets = Graphics3D.offsets;
 
-			Graphics3D.prepareOffsets(viewportWidth, viewportHeight);
+			Graphics3D.prepareOffsets(Graphics3D.viewportWidth, Graphics3D.viewportHeight);
 			viewportOffsets = Graphics3D.offsets;
 
-			SceneGraph.init(viewportWidth, viewportHeight, 500, 800);
+			SceneGraph.init(Graphics3D.viewportWidth, Graphics3D.viewportHeight, 500, 800);
 		} catch (Exception e) {
 			errorLoading = true;
 			e.printStackTrace();
@@ -1115,7 +1105,7 @@ public class Game extends GameShell {
 			Graphics2D.clear();
 			mapback.draw(0, 0);
 
-			viewport = new ImageProducer(viewportWidth, viewportHeight);
+			viewport = new ImageProducer(Graphics3D.viewportWidth, Graphics3D.viewportHeight);
 			Graphics2D.clear();
 
 			redraw = true;
@@ -1221,7 +1211,7 @@ public class Game extends GameShell {
 					break;
 				}
 
-				boolean isAscii = StringTools.isASCII((char) c);
+				boolean isAscii = Strings.isASCII((char) c);
 
 				if (loginFocusedLine == 0) {
 					if (c == 8 && loginUsername.length() > 0) {
@@ -1552,21 +1542,21 @@ public class Game extends GameShell {
 		if (flameCycle1 > 0) {
 			for (int n = 0; n < 256; n++) {
 				if (flameCycle1 > 768) {
-					flameGradient[n] = ColorTools.compositeAlpha(flameGradientGreen[n], flameGradientRed[n], 1024 - flameCycle1);
+					flameGradient[n] = Colors.compositeSrcIn(flameGradientGreen[n], flameGradientRed[n], 1024 - flameCycle1);
 				} else if (flameCycle1 > 256) {
 					flameGradient[n] = flameGradientGreen[n];
 				} else {
-					flameGradient[n] = ColorTools.compositeAlpha(flameGradientRed[n], flameGradientGreen[n], 256 - flameCycle1);
+					flameGradient[n] = Colors.compositeSrcIn(flameGradientRed[n], flameGradientGreen[n], 256 - flameCycle1);
 				}
 			}
 		} else if (flameCycle2 > 0) {
 			for (int n = 0; n < 256; n++) {
 				if (flameCycle2 > 768) {
-					flameGradient[n] = ColorTools.compositeAlpha(flameGradientViolet[n], flameGradientRed[n], 1024 - flameCycle2);
+					flameGradient[n] = Colors.compositeSrcIn(flameGradientViolet[n], flameGradientRed[n], 1024 - flameCycle2);
 				} else if (flameCycle2 > 256) {
 					flameGradient[n] = flameGradientViolet[n];
 				} else {
-					flameGradient[n] = ColorTools.compositeAlpha(flameGradientRed[n], flameGradientViolet[n], 256 - flameCycle2);
+					flameGradient[n] = Colors.compositeSrcIn(flameGradientRed[n], flameGradientViolet[n], 256 - flameCycle2);
 				}
 			}
 		} else {
@@ -1690,11 +1680,11 @@ public class Game extends GameShell {
 			fontBold.drawTaggable(("Username: " + loginUsername + ((loginFocusedLine == 0 & clientclock % 40 < 20) ? "@yel@|" : "")), w / 2 - 90, y, 0xFFFFFF, true);
 			y += 15;
 
-			fontBold.drawTaggable(("Password: " + StringTools.toAsterisks(loginPassword) + (loginFocusedLine == 1 & clientclock % 40 < 20 ? "@yel@|" : "")), w / 2 - 88, y, 0xFFFFFF, true);
+			fontBold.drawTaggable(("Password: " + Strings.toAsterisks(loginPassword) + (loginFocusedLine == 1 & clientclock % 40 < 20 ? "@yel@|" : "")), w / 2 - 88, y, 0xFFFFFF, true);
 			y += 15;
 
 			if (titleState == 1) {
-				fontBold.drawTaggable(("Confirm Password: " + StringTools.toAsterisks(loginPasswordConfirm) + (loginFocusedLine == 2 & clientclock % 40 < 20 ? "@yel@|" : "")), w / 2 - 143, y, 0xFFFFFF, true);
+				fontBold.drawTaggable(("Confirm Password: " + Strings.toAsterisks(loginPasswordConfirm) + (loginFocusedLine == 2 & clientclock % 40 < 20 ? "@yel@|" : "")), w / 2 - 143, y, 0xFFFFFF, true);
 			}
 
 			int x = w / 2 - 80;
@@ -2464,7 +2454,7 @@ public class Game extends GameShell {
 
 					// add friend
 					if (chatDialogueInputType == 1 && friendCount < 100) {
-						chatDialogueInput = StringTools.toStartCase(StringTools.getClean(chatDialogueInput));
+						chatDialogueInput = Strings.toStartCase(Strings.getClean(chatDialogueInput));
 
 						if (chatDialogueInput.length() > 0) {
 							boolean contains = false;
@@ -2485,14 +2475,14 @@ public class Game extends GameShell {
 								friendCount++;
 								sidebarRedraw = true;
 								out.putOpcode(150);
-								out.putLong(StringTools.getBase37(chatDialogueInput));
+								out.putLong(Strings.getBase37(chatDialogueInput));
 							}
 						}
 					}
 
 					// remove friend
 					if (chatDialogueInputType == 2 && friendCount > 0) {
-						chatDialogueInput = StringTools.toStartCase(StringTools.getClean(chatDialogueInput));
+						chatDialogueInput = Strings.toStartCase(Strings.getClean(chatDialogueInput));
 
 						if (chatDialogueInput.length() > 0) {
 							for (int n = 0; n < friendCount; n++) {
@@ -2506,7 +2496,7 @@ public class Game extends GameShell {
 									}
 
 									out.putOpcode(234);
-									out.putLong(StringTools.getBase37(chatDialogueInput));
+									out.putLong(Strings.getBase37(chatDialogueInput));
 									break;
 								}
 							}
@@ -2519,11 +2509,11 @@ public class Game extends GameShell {
 						out.putByte(0); // size placehold
 
 						int start = out.position;
-						out.putLong(StringTools.getBase37(friendName[chatSendFriendMessageIndex]));
-						StringTools.write(out, chatDialogueInput);
+						out.putLong(Strings.getBase37(friendName[chatSendFriendMessageIndex]));
+						Strings.write(out, chatDialogueInput);
 						out.putByteLength(out.position - start);
 
-						chatDialogueInput = StringTools.toSentence(chatDialogueInput);
+						chatDialogueInput = Strings.toSentence(chatDialogueInput);
 						chatDialogueInput = Censor.getFiltered(chatDialogueInput);
 
 						addMessage(6, friendName[chatSendFriendMessageIndex], chatDialogueInput);
@@ -2540,7 +2530,7 @@ public class Game extends GameShell {
 
 					// add ignore
 					if (chatDialogueInputType == 4 && ignoreCount < 100 && chatDialogueInput.length() > 0) {
-						long name = StringTools.getBase37(chatDialogueInput);
+						long name = Strings.getBase37(chatDialogueInput);
 
 						boolean contains = false;
 						for (int n = 0; n < ignoreCount; n++) {
@@ -2560,7 +2550,7 @@ public class Game extends GameShell {
 
 					// remove ignore
 					if (chatDialogueInputType == 5 && ignoreCount > 0 && chatDialogueInput.length() > 0) {
-						long name = StringTools.getBase37(chatDialogueInput);
+						long name = Strings.getBase37(chatDialogueInput);
 
 						for (int n = 0; n < ignoreCount; n++) {
 							if (ignoreNameLong[n] == name) {
@@ -2717,10 +2707,10 @@ public class Game extends GameShell {
 						int start = out.position;
 						out.putByte(color);
 						out.putByte(effect);
-						StringTools.write(out, chatInput);
+						Strings.write(out, chatInput);
 						out.putByteLength(out.position - start);
 
-						chatInput = StringTools.toSentence(chatInput);
+						chatInput = Strings.toSentence(chatInput);
 						chatInput = Censor.getFiltered(chatInput);
 
 						localPlayer.spoken = chatInput;
@@ -3438,6 +3428,7 @@ public class Game extends GameShell {
 
 			if (i < playerCount) {
 				ScenePlayer p = (ScenePlayer) e;
+
 				if (p.headicons != 0) {
 					setDrawPos(e, e.height + 15);
 
@@ -3459,49 +3450,7 @@ public class Game extends GameShell {
 
 				if (drawX > -1) {
 					if (allowChatEffects == 0) {
-						int rgb = 0xFFFF00;
-
-						if (e.spokenColor < 6) {
-							rgb = SPOKEN_COLORS[e.spokenColor];
-						} else if (e.spokenColor == 6) {
-							rgb = drawCycle % 20 < 10 ? 0xFF0000 : 0xFFFF00;
-						} else if (e.spokenColor == 7) {
-							rgb = drawCycle % 20 < 10 ? 0xFF : 0xFFFF;
-						} else if (e.spokenColor == 8) {
-							rgb = drawCycle % 20 < 10 ? 0xB000 : 0x80FF80;
-						} else if (e.spokenColor == 9) {
-							int phase = 150 - e.spokenLife;
-
-							if (phase < 50) {
-								rgb = 0xFF0000 + phase * 0x500;
-							} else if (phase < 100) {
-								rgb = 0xFFFF00 - (phase - 50) * 0x50000;
-							} else if (phase < 150) {
-								rgb = 0xFF00 + (phase - 100) * 5;
-							}
-						} else if (e.spokenColor == 10) {
-							int phase = 150 - e.spokenLife;
-
-							if (phase < 50) {
-								rgb = 0xFF0000 + (phase * 5);
-							} else if (phase < 100) {
-								rgb = 0xFF00FF - (phase - 50) * 0x50000;
-							} else if (phase < 150) {
-								rgb = (0xFF + (phase - 100) * 0x50000 - (phase - 100) * 5);
-							}
-						} else if (e.spokenColor == 11) {
-							int phase = 150 - e.spokenLife;
-
-							if (phase < 50) {
-								rgb = 0xFFFFFF - phase * 0x50005;
-							} else if (phase < 100) {
-								rgb = 0xFF00 + (phase - 50) * 0x50005;
-							} else if (phase < 150) {
-								rgb = 0xFFFFFF - (phase - 100) * 0x50000;
-							}
-						} else if (e.spokenColor == 12) {
-							rgb = (int) (Math.random() * 0xFFFFFF);
-						}
+						int rgb = Colors.getSpokenColor(e.spokenColor, e.spokenColor < 9 ? drawCycle : e.spokenLife);
 
 						if (e.spokenEffect == 0) { // colored
 							fontBold.drawCentered(e.spoken, drawX, drawY + 1, 0);
@@ -3512,7 +3461,6 @@ public class Game extends GameShell {
 						} else if (e.spokenEffect == 2) { // scroll
 							int w = fontBold.stringWidth(e.spoken);
 							int x = ((150 - e.spokenLife) * (w + 100)) / 150;
-
 							Graphics2D.setBounds(drawX - 50, 0, drawX + 50, 334);
 							fontBold.draw(e.spoken, drawX + 50 - x, drawY + 1, 0);
 							fontBold.draw(e.spoken, drawX + 50 - x, drawY, rgb);
@@ -3527,13 +3475,9 @@ public class Game extends GameShell {
 
 			if (e.lastCombatCycle > clientclock + 100) {
 				setDrawPos(e, e.height + 15);
+
 				if (drawX > -1) {
-					int w = (e.currentHealth * 30 / e.maxHealth);
-
-					if (w > 30) {
-						w = 30;
-					}
-
+					int w = Math.min(30, (e.currentHealth * 30) / e.maxHealth);
 					Graphics2D.fillRect(drawX - 15, drawY - 3, w, 5, 0xFF00);
 					Graphics2D.fillRect(drawX - 15 + w, drawY - 3, 30 - w, 5, 0xFF0000);
 				}
@@ -3552,10 +3496,11 @@ public class Game extends GameShell {
 	}
 
 	public void drawCross() {
-		if (crossType == 1)
+		if (crossType == 1) {
 			crosses[crossCycle / 100].draw(crossX - 8 - 9, crossY - 8 - 11);
-		else if (crossType == 2)
+		} else if (crossType == 2) {
 			crosses[crossCycle / 100 + 4].draw(crossX - 8 - 9, crossY - 8 - 11);
+		}
 	}
 
 	public void updateAnimatedTextures(int cycle) {
@@ -3666,8 +3611,8 @@ public class Game extends GameShell {
 		sceneY = w;
 
 		if (sceneZ >= 50) {
-			drawX = Graphics3D.centerX + (sceneX * viewportWidth) / sceneZ;
-			drawY = Graphics3D.centerY + (sceneY * viewportWidth) / sceneZ;
+			drawX = Graphics3D.centerX + (sceneX * Graphics3D.viewportWidth) / sceneZ;
+			drawY = Graphics3D.centerY + (sceneY * Graphics3D.viewportWidth) / sceneZ;
 		} else {
 			drawX = -1;
 			drawY = -1;
@@ -4744,7 +4689,7 @@ public class Game extends GameShell {
 							crc32.reset();
 							crc32.update(data);
 							if ((int) crc32.getValue() != landCrc) {
-								 data = null;
+								data = null;
 							}
 						}
 
@@ -4931,7 +4876,7 @@ public class Game extends GameShell {
 
 				if (s.endsWith(":tradereq:")) {
 					String name = s.substring(0, s.indexOf(":"));
-					long l = StringTools.getBase37(name);
+					long l = Strings.getBase37(name);
 					boolean ignore = false;
 					for (int n = 0; n < ignoreCount; n++) {
 						if (ignoreNameLong[n] == l) {
@@ -5118,7 +5063,7 @@ public class Game extends GameShell {
 			} else if (ptype == 114) {
 				long nameLong = in.getLong();
 				int world = in.getUByte();
-				String name = StringTools.toStartCase(StringTools.fromBase37(nameLong));
+				String name = Strings.toStartCase(Strings.fromBase37(nameLong));
 
 				for (int n = 0; n < friendCount; n++) {
 					if (name.equals(friendName[n])) {
@@ -5275,9 +5220,9 @@ public class Game extends GameShell {
 					if (!ignore) {
 						privateMessageIndex[privateMessageCount] = uid;
 						privateMessageCount = (privateMessageCount + 1) % 100;
-						String s = StringTools.read(in, psize - 12);
+						String s = Strings.read(in, psize - 12);
 						s = Censor.getFiltered(s);
-						addMessage(3, StringTools.toStartCase(StringTools.fromBase37(name)), s);
+						addMessage(3, Strings.toStartCase(Strings.fromBase37(name)), s);
 					}
 				} else if (ptype == 6) {
 					ignoreCount = psize / 8;
@@ -5908,7 +5853,7 @@ public class Game extends GameShell {
 			if ((mask & 0x40) == 0x40) {
 				int info = b.getUShort();
 				int length = b.getUByte();
-				long longName = StringTools.getBase37(p.name);
+				long longName = Strings.getBase37(p.name);
 
 				boolean ignore = false;
 				for (int m = 0; m < ignoreCount; m++) {
@@ -5919,7 +5864,7 @@ public class Game extends GameShell {
 				}
 
 				if (!ignore) {
-					String s = StringTools.read(b, length);
+					String s = Strings.read(b, length);
 					s = Censor.getFiltered(s);
 					p.spoken = s;
 					p.spokenColor = info >> 8;
@@ -6319,8 +6264,8 @@ public class Game extends GameShell {
 				if (clickX > 8 && clickY > 11 && clickX < 520 && clickY < 345) {
 					int x = clickX - 8 - maxWidth / 2;
 
-					if (x + maxWidth > viewportWidth) {
-						x = viewportWidth - maxWidth;
+					if (x + maxWidth > Graphics3D.viewportWidth) {
+						x = Graphics3D.viewportWidth - maxWidth;
 					}
 
 					if (x < 0) {
@@ -6329,8 +6274,8 @@ public class Game extends GameShell {
 
 					int y = clickY - 11;
 
-					if (y + h > viewportHeight) {
-						y = viewportHeight - h;
+					if (y + h > Graphics3D.viewportHeight) {
+						y = Graphics3D.viewportHeight - h;
 					}
 
 					if (y < 0) {
@@ -7390,7 +7335,7 @@ public class Game extends GameShell {
 	public final void drawScrollbar(int x, int y, int h, int scrollHeight, int scrollAmount) {
 		scrollbar1.draw(x, y);
 		scrollbar2.draw(x, y + h - 16);
-		Graphics2D.fillRect(x, y + 16, 16, h - 32, SCROLLBAR_TRACK_COLOR);
+		Graphics2D.fillRect(x, y + 16, 16, h - 32, Colors.SCROLLBAR_TRACK);
 
 		int gripHeight = ((h - 32) * h) / scrollHeight;
 
@@ -7399,15 +7344,15 @@ public class Game extends GameShell {
 		}
 
 		int offY = ((h - 32 - gripHeight) * scrollAmount) / (scrollHeight - h);
-		Graphics2D.fillRect(x, y + 16 + offY, 16, gripHeight, SCROLLBAR_GRIP_FOREGROUND);
-		Graphics2D.drawVerticalLine(x, y + 16 + offY, gripHeight, SCROLLBAR_GRIP_HIGHLIGHT);
-		Graphics2D.drawVerticalLine(x + 1, y + 16 + offY, gripHeight, SCROLLBAR_GRIP_HIGHLIGHT);
-		Graphics2D.drawHorizontalLine(x, y + 16 + offY, 16, SCROLLBAR_GRIP_HIGHLIGHT);
-		Graphics2D.drawHorizontalLine(x, y + 17 + offY, 16, SCROLLBAR_GRIP_HIGHLIGHT);
-		Graphics2D.drawVerticalLine(x + 15, y + 16 + offY, gripHeight, SCROLLBAR_GRIP_LOWLIGHT);
-		Graphics2D.drawVerticalLine(x + 14, y + 17 + offY, gripHeight - 1, SCROLLBAR_GRIP_LOWLIGHT);
-		Graphics2D.drawHorizontalLine(x, y + 15 + offY + gripHeight, 16, SCROLLBAR_GRIP_LOWLIGHT);
-		Graphics2D.drawHorizontalLine(x + 1, y + 14 + offY + gripHeight, 15, SCROLLBAR_GRIP_LOWLIGHT);
+		Graphics2D.fillRect(x, y + 16 + offY, 16, gripHeight, Colors.SCROLLBAR_GRIP_FOREGROUND);
+		Graphics2D.drawVerticalLine(x, y + 16 + offY, gripHeight, Colors.SCROLLBAR_GRIP_HIGHLIGHT);
+		Graphics2D.drawVerticalLine(x + 1, y + 16 + offY, gripHeight, Colors.SCROLLBAR_GRIP_HIGHLIGHT);
+		Graphics2D.drawHorizontalLine(x, y + 16 + offY, 16, Colors.SCROLLBAR_GRIP_HIGHLIGHT);
+		Graphics2D.drawHorizontalLine(x, y + 17 + offY, 16, Colors.SCROLLBAR_GRIP_HIGHLIGHT);
+		Graphics2D.drawVerticalLine(x + 15, y + 16 + offY, gripHeight, Colors.SCROLLBAR_GRIP_LOWLIGHT);
+		Graphics2D.drawVerticalLine(x + 14, y + 17 + offY, gripHeight - 1, Colors.SCROLLBAR_GRIP_LOWLIGHT);
+		Graphics2D.drawHorizontalLine(x, y + 15 + offY + gripHeight, 16, Colors.SCROLLBAR_GRIP_LOWLIGHT);
+		Graphics2D.drawHorizontalLine(x + 1, y + 14 + offY + gripHeight, 15, Colors.SCROLLBAR_GRIP_LOWLIGHT);
 	}
 
 	public final String getAmountString(int i) {
@@ -7748,13 +7693,13 @@ public class Game extends GameShell {
 
 			if (type == 1) {
 				if (v == 1) {
-					Graphics3D.generatePalette(0.9);
+					Palette.setBrightness(0.9);
 				} else if (v == 2) {
-					Graphics3D.generatePalette(0.8);
+					Palette.setBrightness(0.8);
 				} else if (v == 3) {
-					Graphics3D.generatePalette(0.7);
+					Palette.setBrightness(0.7);
 				} else if (v == 4) {
-					Graphics3D.generatePalette(0.6);
+					Palette.setBrightness(0.6);
 				}
 				Obj.sprites.clear();
 				redraw = true;
@@ -7830,7 +7775,7 @@ public class Game extends GameShell {
 				w.messageDisabled = "";
 				w.buttonType = RSInterface.NO_BUTTON;
 			} else {
-				w.messageDisabled = StringTools.toStartCase(StringTools.fromBase37((ignoreNameLong[clientCode])));
+				w.messageDisabled = Strings.toStartCase(Strings.fromBase37((ignoreNameLong[clientCode])));
 			}
 		} else if (clientCode == 503) {
 			w.scrollHeight = ignoreCount * 15 + 20;

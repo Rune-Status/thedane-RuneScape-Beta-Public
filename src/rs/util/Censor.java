@@ -158,7 +158,7 @@ public class Censor {
 
 	public static void replaceUppercases(char[] from, char[] to) {
 		for (int i = 0; i < from.length; i++) {
-			if (to[i] != '*' && StringTools.isUppercaseAlpha(from[i])) {
+			if (to[i] != '*' && Strings.isUppercaseAlpha(from[i])) {
 				to[i] = from[i];
 			}
 		}
@@ -169,12 +169,12 @@ public class Censor {
 		for (int n = 0; n < chars.length; n++) {
 			char c = chars[n];
 
-			if (StringTools.isAlpha(c)) {
+			if (Strings.isAlpha(c)) {
 				if (flag) {
-					if (StringTools.isLowercaseAlpha(c)) {
+					if (Strings.isLowercaseAlpha(c)) {
 						flag = false;
 					}
-				} else if (StringTools.isUppercaseAlpha(c)) {
+				} else if (Strings.isUppercaseAlpha(c)) {
 					chars[n] = (char) ((c + 'a') - 'A');
 				}
 			} else {
@@ -239,7 +239,7 @@ public class Censor {
 					}
 					continue;
 				}
-				if (off >= domain.length || !StringTools.isSymbol(b)) {
+				if (off >= domain.length || !Strings.isSymbol(b)) {
 					break;
 				}
 				end++;
@@ -272,7 +272,7 @@ public class Censor {
 
 		// scan until it finds an @ or a non-symbol
 		for (int i = end - 1; i >= 0; i--) {
-			if (!StringTools.isSymbol(a[i])) {
+			if (!Strings.isSymbol(a[i])) {
 				break;
 			}
 
@@ -284,7 +284,7 @@ public class Censor {
 		// scan for series of asterisks
 		int asteriskCount = 0;
 		for (int i = end - 1; i >= 0; i--) {
-			if (!StringTools.isSymbol(b[i])) {
+			if (!Strings.isSymbol(b[i])) {
 				break;
 			}
 
@@ -298,7 +298,7 @@ public class Censor {
 		}
 
 		// return whether the last char is a symbol or not.
-		return !StringTools.isSymbol(a[end - 1]) ? 0 : 1;
+		return !Strings.isSymbol(a[end - 1]) ? 0 : 1;
 	}
 
 	public static int getDomainDotFilterStatus(int start, char a[], char b[]) {
@@ -309,7 +309,7 @@ public class Censor {
 
 		// scan until it finds a period or comma or a non-symbol
 		for (int i = start + 1; i < a.length; i++) {
-			if (!StringTools.isSymbol(a[i])) {
+			if (!Strings.isSymbol(a[i])) {
 				break;
 			}
 
@@ -321,7 +321,7 @@ public class Censor {
 		// scan for series of asterisks
 		int asteriskCount = 0;
 		for (int i = start + 1; i < a.length; i++) {
-			if (!StringTools.isSymbol(b[i])) {
+			if (!Strings.isSymbol(b[i])) {
 				break;
 			}
 
@@ -335,7 +335,7 @@ public class Censor {
 		}
 
 		// return whether the first char is a symbol or not
-		return !StringTools.isSymbol(a[start + 1]) ? 0 : 1;
+		return !Strings.isSymbol(a[start + 1]) ? 0 : 1;
 	}
 
 	public static void filterTlds(char[] chars) {
@@ -388,7 +388,7 @@ public class Censor {
 					continue;
 				}
 
-				if (off >= tld.length || !StringTools.isSymbol(b)) {
+				if (off >= tld.length || !Strings.isSymbol(b)) {
 					break;
 				}
 
@@ -447,11 +447,11 @@ public class Censor {
 						boolean findStart = false;
 						for (int i = first - 1; i >= 0; i--) {
 							if (findStart) {
-								if (StringTools.isSymbol(chars[i])) {
+								if (Strings.isSymbol(chars[i])) {
 									break;
 								}
 								first = i;
-							} else if (!StringTools.isSymbol(chars[i])) {
+							} else if (!Strings.isSymbol(chars[i])) {
 								findStart = true;
 								first = i;
 							}
@@ -480,11 +480,11 @@ public class Censor {
 						boolean findLast = false;
 						for (int i = last + 1; i < chars.length; i++) {
 							if (findLast) {
-								if (StringTools.isSymbol(chars[i])) {
+								if (Strings.isSymbol(chars[i])) {
 									break;
 								}
 								last = i;
-							} else if (!StringTools.isSymbol(chars[i])) {
+							} else if (!Strings.isSymbol(chars[i])) {
 								findLast = true;
 								last = i;
 							}
@@ -506,7 +506,7 @@ public class Censor {
 		}
 
 		for (int i = start - 1; i >= 0; i--) {
-			if (!StringTools.isSymbol(chars[i])) {
+			if (!Strings.isSymbol(chars[i])) {
 				break;
 			}
 			if (chars[i] == ',' || chars[i] == '.') {
@@ -516,7 +516,7 @@ public class Censor {
 
 		int asteriskCount = 0;
 		for (int i = start - 1; i >= 0; i--) {
-			if (!StringTools.isSymbol(filteredDot[i])) {
+			if (!Strings.isSymbol(filteredDot[i])) {
 				break;
 			}
 
@@ -528,7 +528,7 @@ public class Censor {
 		if (asteriskCount >= 3) {
 			return 4;
 		}
-		return !StringTools.isSymbol(chars[start - 1]) ? 0 : 1;
+		return !Strings.isSymbol(chars[start - 1]) ? 0 : 1;
 	}
 
 	public static int getTldSlashFilterStatus(char chars[], int end, char filteredSlash[]) {
@@ -537,7 +537,7 @@ public class Censor {
 		}
 
 		for (int j = end + 1; j < chars.length; j++) {
-			if (!StringTools.isSymbol(chars[j])) {
+			if (!Strings.isSymbol(chars[j])) {
 				break;
 			}
 			if (chars[j] == '\\' || chars[j] == '/') {
@@ -547,7 +547,7 @@ public class Censor {
 
 		int asterisks = 0;
 		for (int l = end + 1; l < chars.length; l++) {
-			if (!StringTools.isSymbol(filteredSlash[l])) {
+			if (!Strings.isSymbol(filteredSlash[l])) {
 				break;
 			}
 			if (filteredSlash[l] == '*') {
@@ -558,7 +558,7 @@ public class Censor {
 		if (asterisks >= 5) {
 			return 4;
 		}
-		return !StringTools.isSymbol(chars[end + 1]) ? 0 : 1;
+		return !Strings.isSymbol(chars[end + 1]) ? 0 : 1;
 	}
 
 	public static void filterBad(char[] chars, char[] fragment, byte badCombinations[][]) {
@@ -587,11 +587,11 @@ public class Censor {
 				}
 
 				if (fragOff < fragment.length && (charLen = getEmulatedBadCharLen(fragment[fragOff], b, c)) > 0) {
-					if (charLen == 1 && StringTools.isNumeral(b)) {
+					if (charLen == 1 && Strings.isNumeral(b)) {
 						isEmulated = true;
 					}
 
-					if (charLen == 2 && (StringTools.isNumeral(b) || StringTools.isNumeral(c))) {
+					if (charLen == 2 && (Strings.isNumeral(b) || Strings.isNumeral(c))) {
 						isEmulated = true;
 					}
 
@@ -614,15 +614,15 @@ public class Censor {
 					continue;
 				}
 
-				if (fragOff >= fragment.length || !StringTools.isNotLowercaseAlpha(b)) {
+				if (fragOff >= fragment.length || !Strings.isNotLowercaseAlpha(b)) {
 					break;
 				}
 
-				if (StringTools.isSymbol(b) && b != '\'') {
+				if (Strings.isSymbol(b) && b != '\'') {
 					isSymbol = true;
 				}
 
-				if (StringTools.isNumeral(b)) {
+				if (Strings.isNumeral(b)) {
 					isNumeral = true;
 				}
 
@@ -657,12 +657,12 @@ public class Censor {
 					boolean badNext = false;
 
 					// if the previous is out of range or a symbol
-					if (start - 1 < 0 || StringTools.isSymbol(chars[start - 1]) && chars[start - 1] != '\'') {
+					if (start - 1 < 0 || Strings.isSymbol(chars[start - 1]) && chars[start - 1] != '\'') {
 						badCurrent = true;
 					}
 
 					// if the current is out of range or a symbol
-					if (end >= chars.length || StringTools.isSymbol(chars[end]) && chars[end] != '\'') {
+					if (end >= chars.length || Strings.isSymbol(chars[end]) && chars[end] != '\'') {
 						badNext = true;
 					}
 
@@ -675,11 +675,11 @@ public class Censor {
 						}
 
 						for (; !good && cur < end; cur++) {
-							if (cur >= 0 && (!StringTools.isSymbol(chars[cur]) || chars[cur] == '\'')) {
+							if (cur >= 0 && (!Strings.isSymbol(chars[cur]) || chars[cur] == '\'')) {
 								char[] frag = new char[3];
 								int off;
 								for (off = 0; off < 3; off++) {
-									if (cur + off >= chars.length || StringTools.isSymbol(chars[cur + off]) && chars[cur + off] != '\'') {
+									if (cur + off >= chars.length || Strings.isSymbol(chars[cur + off]) && chars[cur + off] != '\'') {
 										break;
 									}
 									frag[off] = chars[cur + off];
@@ -694,7 +694,7 @@ public class Censor {
 
 								// if we getUByte less than 3 chars, our cur is
 								// within bounds, and isn't a symbol
-								if (off < 3 && cur - 1 >= 0 && (!StringTools.isSymbol(chars[cur - 1]) || chars[cur - 1] == '\'')) {
+								if (off < 3 && cur - 1 >= 0 && (!Strings.isSymbol(chars[cur - 1]) || chars[cur - 1] == '\'')) {
 									valid = false;
 								}
 
@@ -716,9 +716,9 @@ public class Censor {
 					int alphaIndex = -1;
 
 					for (int n = start; n < end; n++) {
-						if (StringTools.isNumeral(chars[n])) {
+						if (Strings.isNumeral(chars[n])) {
 							numeralCount++;
-						} else if (StringTools.isAlpha(chars[n])) {
+						} else if (Strings.isAlpha(chars[n])) {
 							alphaCount++;
 							alphaIndex = n;
 						}
@@ -971,11 +971,11 @@ public class Censor {
 	// [a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s,
 	// t, u, v, w, x, y, z, null?, ', 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 	public static byte getIndex(char c) {
-		if (StringTools.isLowercaseAlpha(c)) {
+		if (Strings.isLowercaseAlpha(c)) {
 			return (byte) ((c - 'a') + 1);
 		} else if (c == '\'') {
 			return 28;
-		} else if (StringTools.isNumeral(c)) {
+		} else if (Strings.isNumeral(c)) {
 			return (byte) ((c - '0') + 29);
 		}
 		return 27;
@@ -992,7 +992,7 @@ public class Censor {
 
 			// scan for lowercase char
 			for (int i = end; i >= 0 && i < index && !foundLowercase; i++) {
-				if (!StringTools.isSymbol(chars[i]) && !StringTools.isNotLowercaseAlpha(chars[i])) {
+				if (!Strings.isSymbol(chars[i]) && !Strings.isNotLowercaseAlpha(chars[i])) {
 					foundLowercase = true;
 				}
 			}
@@ -1057,7 +1057,7 @@ public class Censor {
 
 		for (int i = 0; i < chars.length; i++) {
 			// if char not numeral and not null
-			if (!StringTools.isNumeral(chars[i]) && chars[i] != 0) {
+			if (!Strings.isNumeral(chars[i]) && chars[i] != 0) {
 				skip = false;
 			}
 		}
@@ -1101,11 +1101,11 @@ public class Censor {
 			// getUByte backwards
 			char c = chars[chars.length - n - 1];
 
-			if (StringTools.isLowercaseAlpha(c)) {
+			if (Strings.isLowercaseAlpha(c)) {
 				k = (k * 38) + ((c - 'a') + 1);
 			} else if (c == '\'') {
 				k = (k * 38) + 27;
-			} else if (StringTools.isNumeral(c)) {
+			} else if (Strings.isNumeral(c)) {
 				k = (k * 38) + ((c - '0') + 28);
 			} else if (c != 0) {
 				return 0;

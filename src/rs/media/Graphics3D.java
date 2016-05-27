@@ -1,6 +1,7 @@
 package rs.media;
 
 import rs.io.Archive;
+import rs.util.Colors;
 
 public class Graphics3D extends Graphics2D {
 
@@ -25,6 +26,8 @@ public class Graphics3D extends Graphics2D {
 	public static int cycle;
 	public static int[] palette;
 	public static int[][] texturePalettes;
+	public static int viewportWidth = 512;
+	public static int viewportHeight = 334;
 
 	public static void unload() {
 		oneOverFixed1715 = null;
@@ -124,7 +127,7 @@ public class Graphics3D extends Graphics2D {
 		}
 
 		// average each channel and bitpack
-		int rgb = adjustRGBIntensity((r / length << 16) + (g / length << 8) + b / length, 1.4);
+		int rgb = Colors.setBrightness((r / length << 16) + (g / length << 8) + b / length, 1.4);
 
 		// we use 0 to identify as unretrieved
 		if (rgb == 0) {
@@ -244,80 +247,6 @@ public class Graphics3D extends Graphics2D {
 
 		}
 		return buffer;
-	}
-
-	private static double getValue(double value, double a, double b) {
-		if ((6.0 * value) < 1.0)
-			return b + ((a - b) * 6.0 * value);
-		if (2.0 * value < 1.0)
-			return a;
-		if (3.0 * value < 2.0)
-			return b + ((a - b) * ((2.0 / 3.0) - value) * 6.0);
-		return b;
-	}
-
-	public static void generatePalette(double exponent) {
-		int off = 0;
-
-		for (int y = 0; y < 512; y++) {
-			double fGreen = ((double) (y / 8) / 64.0) + 0.0078125;
-			double saturation = ((double) (y & 0x7) / 8.0) + 0.0625;
-
-			for (int x = 0; x < 128; x++) {
-				double lightness = (double) x / 128.0;
-				double red = lightness;
-				double green = lightness;
-				double blue = lightness;
-
-				if (saturation != 0.0) {
-					double a;
-
-					if (lightness < 0.5) {
-						a = lightness * (1.0 + saturation);
-					} else {
-						a = (lightness + saturation) - (lightness * saturation);
-					}
-
-					double b = (2.0 * lightness) - a;
-
-					double fRed = fGreen + (1.0 / 3.0);
-					double fBlue = fGreen - (1.0 / 3.0);
-
-					if (fRed > 1.0) fRed--;
-					if (fBlue < 0.0) fBlue++;
-
-					red = getValue(fRed, a, b);
-					green = getValue(fGreen, a, b);
-					blue = getValue(fBlue, a, b);
-				}
-
-				palette[off++] = adjustRGBIntensity(((int) (red * 256.0) << 16) | ((int) (green * 256.0) << 8) | (int) (blue * 256.0), exponent);
-			}
-
-			// updates the texture palette brightness
-			for (int n = 0; n < 50; n++) {
-				if (textures[n] != null) {
-					int[] texturePalette = textures[n].palette;
-					texturePalettes[n] = new int[texturePalette.length];
-
-					for (int i = 0; i < texturePalette.length; i++) {
-						texturePalettes[n][i] = adjustRGBIntensity(texturePalette[i], exponent);
-					}
-				}
-
-				updateTexture(n);
-			}
-		}
-	}
-
-	private static int adjustRGBIntensity(int rgb, double intensity) {
-		double r = (double) (rgb >> 16) / 256.0;
-		double g = (double) (rgb >> 8 & 0xff) / 256.0;
-		double b = (double) (rgb & 0xff) / 256.0;
-		r = Math.pow(r, intensity);
-		g = Math.pow(g, intensity);
-		b = Math.pow(b, intensity);
-		return ((int) (r * 256.0) << 16) + ((int) (g * 256.0) << 8) + (int) (b * 256.0);
 	}
 
 	public static void fillShadedTriangle(int xA, int yA, int cA, int xB, int yB, int cB, int xC, int yC, int cC) {
