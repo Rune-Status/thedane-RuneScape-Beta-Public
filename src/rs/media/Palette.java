@@ -4,7 +4,7 @@ import rs.util.Colors;
 
 public final class Palette {
 
-	public static int[] rgb;
+	public static int[] rgb = new int[128 * 512];
 
 	public static void setBrightness(double brightness) {
 		int off = 0;
